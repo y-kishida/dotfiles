@@ -1,0 +1,6 @@
+{
+  "LazyVim": { "branch": "main", "commit": "1f603f9074118ee9975b2af0308452ca324640e5" },
+  "context_filetype.vim": { "branch": "master", "commit": "7ff5b43fc8d5b274aa19ade5af11e9fa57577ed6" },
+  "lazy.nvim": { "branch": "main", "commit": "c882227f1fdc4580d14212df8f814a0772951e3d" },
+  "lexima.vim": { "branch": "master", "commit": "5513d686801993b40c55baa65602f79cd3cf3c77" }
+}
