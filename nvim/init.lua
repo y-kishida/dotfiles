@@ -2,6 +2,29 @@ vim.g.mapleader = " "
 -- options
 vim.opt.number = true
 vim.opt.clipboard = "unnamed"
+vim.opt.statusline = '%f'
+vim.opt.tabstop = 2
+vim.opt.shiftwidth = 2
+vim.opt.smarttab = true
+vim.opt.smartindent = true
+vim.opt.expandtab = true
+
+--keymap
+-- tab
+vim.keymap.set("n", "tl", ":<C-u>tabn<CR>")
+vim.keymap.set("n", "th", ":<C-u>tabp<CR>")
+vim.keymap.set("n", "<C-t>", ":<C-u>tabnew<CR>")
+
+-- window
+vim.keymap.set("n", "<C-h>", "<C-w>h")
+vim.keymap.set("n", "<C-j>", "<C-w>j")
+vim.keymap.set("n", "<C-k>", "<C-w>k")
+vim.keymap.set("n", "<C-l>", "<C-w>l")
+
+vim.keymap.set("n", "<C-q>", ":q<CR>")
+
+-- neotree
+vim.keymap.set("n", "<leader>e", ":Neotree<CR>")
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
@@ -23,6 +46,15 @@ require("lazy").setup({
 
 -- syntax highlight
 { "nvim-treesitter/nvim-treesitter" },
+
+-- copilot
+{ "github/copilot.vim" },
+
+-- goimports
+{ "mattn/vim-goimports" },
+
+-- fTerm 
+{ "numToStr/FTerm.nvim" },
 
 -- lsp
 {
@@ -86,10 +118,77 @@ require("lazy").setup({
     end
 },
 
+-- gotest
+
+{
+  "nvim-neotest/neotest",
+    dependencies = {
+      "nvim-neotest/nvim-nio",
+      "nvim-lua/plenary.nvim",
+      "antoinemadec/FixCursorHold.nvim",
+      "nvim-treesitter/nvim-treesitter",
+      "fredrikaverpil/neotest-golang", -- Installation
+    },
+    config = function()
+      require("neotest").setup({
+        adapters = {
+          require("neotest-golang"), -- Registration
+        },
+	status = { virtual_text = true },
+        output = { open_on_run = true },
+      })
+    end,
+  keys = {
+    --{"<leader>t", "", desc = "+test"},
+    { "<leader>tt", function() require("neotest").run.run(vim.fn.expand("%")) end, desc = "Run File" },
+    { "<leader>tT", function() require("neotest").run.run(vim.uv.cwd()) end, desc = "Run All Test Files" },
+    { "<leader>tr", function() require("neotest").run.run() end, desc = "Run Nearest" },
+    { "<leader>tl", function() require("neotest").run.run_last() end, desc = "Run Last" },
+    { "<leader>ts", function() require("neotest").summary.toggle() end, desc = "Toggle Summary" },
+    { "<leader>to", function() require("neotest").output.open({ enter = true, auto_close = true }) end, desc = "Show Output" },
+    { "<leader>tO", function() require("neotest").output_panel.toggle() end, desc = "Toggle Output Panel" },
+    { "<leader>tS", function() require("neotest").run.stop() end, desc = "Stop" },
+    { "<leader>tw", function() require("neotest").watch.toggle(vim.fn.expand("%")) end, desc = "Toggle Watch" },
+  },
+},
+
+-- neotree
+{
+    "nvim-neo-tree/neo-tree.nvim",
+    cmd = "Neotree",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "nvim-tree/nvim-web-devicons",
+      "MunifTanjim/nui.nvim",
+    },
+		config = function()
+			require("neo-tree").setup({
+				filesystem = {
+					follow_current_file = {
+						enabled = true,
+					},
+					filtered_items = {
+						visible = true,
+						hide_dotfiles = false,
+					},
+				},
+				buffers = {
+					follow_current_file = {
+						enabled = true,
+					},
+				},
+			})
+		end,
+},
+
 -- telescope
 {
     "nvim-telescope/telescope.nvim",
-    dependencies = { "nvim-lua/plenary.nvim" },
+},
+
+{
+  "cohama/lexima.vim",
+  event = "InsertEnter",
 },
 
 })
@@ -97,7 +196,7 @@ require("lazy").setup({
 -- treesitter
 require("nvim-treesitter.configs").setup({
 	ensure_installed = {
-		"go",
+		"go", "gomod", "gosum", 
 	},
 	auto_install = true,
 	highlight = {
@@ -154,6 +253,16 @@ require("lspconfig").jqls.setup{
   capabilities = capabilities,
 }
 
+require'FTerm'.setup({
+    border = 'single',
+    dimensions  = {
+        height = 0.7,
+        width = 0.7,
+    },
+})
+vim.keymap.set('n', '<leader>t', '<CMD>lua require("FTerm").toggle()<CR>')
+vim.keymap.set('t', '<leader>t', '<CMD>lua require("FTerm").close()<CR>')
+
 vim.api.nvim_create_autocmd('LspAttach', {
   group = vim.api.nvim_create_augroup('UserLspConfig', {}),
   callback = function(ev)
@@ -186,9 +295,10 @@ vim.api.nvim_create_autocmd('LspAttach', {
 -- telescope
 local builtin = require('telescope.builtin')
 vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
-vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
+vim.keymap.set('n', '<leader>lg', builtin.live_grep, {})
 vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
 vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
+
 
 -- colorscheme
 vim.cmd.colorscheme "gruvbox"
