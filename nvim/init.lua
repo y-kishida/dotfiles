@@ -53,7 +53,7 @@ require("lazy").setup({
 -- goimports
 { "mattn/vim-goimports" },
 
--- fTerm 
+-- fTerm
 { "numToStr/FTerm.nvim" },
 
 -- lsp
@@ -65,8 +65,8 @@ require("lazy").setup({
 
 {
     "hrsh7th/nvim-cmp",
-    dependencies = { 
-      "hrsh7th/cmp-emoji", 
+    dependencies = {
+      "hrsh7th/cmp-emoji",
       "hrsh7th/cmp-buffer",
       "hrsh7th/cmp-nvim-lsp",
       "hrsh7th/cmp-path",
@@ -191,12 +191,17 @@ require("lazy").setup({
   event = "InsertEnter",
 },
 
+{
+  "ntpeters/vim-better-whitespace",
+  event = "VimEnter",
+},
+
 })
 
 -- treesitter
 require("nvim-treesitter.configs").setup({
 	ensure_installed = {
-		"go", "gomod", "gosum", 
+		"go", "gomod", "gosum",
 	},
 	auto_install = true,
 	highlight = {
